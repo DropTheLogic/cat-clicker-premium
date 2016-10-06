@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Cat Clicker Premium</title>
+    <style>
+        body {
+            font-family: Geneva, Tahoma, sans-serif;
+            background-color: darkseagreen;
+            text-align: center;
+        }
+        #cat-box {
+            display : inline-block;
+            vertical-align : top;
+        }
+        #frame-outer {
+            background-color : black;
+            border: 2px solid black;
+            border-radius : 4px;
+            width : 350px;
+            height : 250px;
+            overflow : hidden;
+        }
+        #frame {
+            position: relative;
+            float: right;
+            right: 50%;
+        }
+        #frame img {
+            position: relative;
+            right: -50%;
+        }
+        #clicks {
+            padding: 15px 0px;
+        }
+        #cat-list-div {
+            display : block;
+        }
+        #cat-list {
+            list-style : none;
+            display: inline-flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            margin: 0px;
+            padding: 0px;
+        }
+        #cat-list li {
+            font-weight : bold;
+            padding : 20px;
+            text-align : center;
+            text-decoration : none;
+            flex-grow: 1;
+        }
+        #cat-list li:hover {
+            background-color : #fff;
+            border-bottom: 1px solid black;
+        }
+        @media (min-width: 600px) {
+            #frame-outer {
+                width: 480px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="cat-app">
+        <div id="cat-box">
+            <div id="name">
+                <h2>Click a cat to begin!</h2>
+            </div>
+            <div id="frame-outer"><div id="frame"></div></div>
+            <div id="clicks">&nbsp</div>
+        </div>
+        <div id="cat-list-div">
+            <ul id="cat-list">
+            </ul>
+        </div>
+    </div>
+    <script>
+    var catApp = document.getElementById("cat-app");
+    var nameBox = document.getElementById("name");
+    var clicksBox = document.getElementById("clicks");
+    var catListUl = document.getElementById("cat-list");
+    var frameImg = document.getElementById("frame-outer");
+    var cats = [];
+    var currentCat;
+    var catFiles = ['images/anton.png', 'images/jeff.png',
+        'images/joey.png', 'images/maurice.png', 'images/paul.png',
+        'images/randy.png', 'images/sarah.png'];
+
+    // Creates array of cat ojects
+    for (var cat in catFiles) {
+        // Create cat name from url of named file
+        var catName = catFiles[cat].slice(0, -4).slice(7);
+        catName = catName.charAt(0).toUpperCase() + catName.slice(1);
+        cats.push({
+            'name' : catName,
+            'clicks' : 0,
+            'url' : catFiles[cat]
+        });
+    }
+
+    // Create one cat list item
+    var makeCatLi = function(cat) {
+        var elem = document.createElement('li');
+        elem.innerHTML = `${cat.name}`;
+        catListUl.appendChild(elem);
+        // Set event listeners to focus main image
+        elem.addEventListener('click', function(e) {
+            // Display Name
+            nameBox.innerHTML = `<h2>${cat.name}<h2>`;
+            // Display Image in frame
+            frame.innerHTML = `<img src="${cat.url}" />`;
+            // Display number of clicks
+            clicksBox.innerHTML = `Number of clicks: ${cat.clicks}`;
+            // Update currentCat
+            currentCat = cats.indexOf(cat);
+        }, false);
+    };
+
+    // Fill ul with cat list items
+    for (var cat in cats) {
+        makeCatLi(cats[cat]);
+    }
+
+    // Create listener for main image to track clicks
+    frameImg.addEventListener('click', function(e) {
+        if (currentCat >= 0) {
+            cats[currentCat].clicks++;
+            clicksBox.innerHTML = `Number of clicks: ${cats[currentCat].clicks}`;
+        }
+    }, false);
+    </script>
+</body>
+</html>
