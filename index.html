@@ -78,59 +78,95 @@
         </div>
     </div>
     <script>
-    var catApp = document.getElementById("cat-app");
-    var nameBox = document.getElementById("name");
-    var clicksBox = document.getElementById("clicks");
-    var catListUl = document.getElementById("cat-list");
-    var frameImg = document.getElementById("frame-outer");
-    var cats = [];
-    var currentCat;
-    var catFiles = ['images/anton.png', 'images/jeff.png',
-        'images/joey.png', 'images/maurice.png', 'images/paul.png',
-        'images/randy.png', 'images/sarah.png'];
-
-    // Creates array of cat ojects
-    for (var cat in catFiles) {
-        // Create cat name from url of named file
-        var catName = catFiles[cat].slice(0, -4).slice(7);
-        catName = catName.charAt(0).toUpperCase() + catName.slice(1);
-        cats.push({
-            'name' : catName,
-            'clicks' : 0,
-            'url' : catFiles[cat]
-        });
-    }
-
-    // Create one cat list item
-    var makeCatLi = function(cat) {
-        var elem = document.createElement('li');
-        elem.innerHTML = `${cat.name}`;
-        catListUl.appendChild(elem);
-        // Set event listeners to focus main image
-        elem.addEventListener('click', function(e) {
-            // Display Name
-            nameBox.innerHTML = `<h2>${cat.name}<h2>`;
-            // Display Image in frame
-            frame.innerHTML = `<img src="${cat.url}" />`;
-            // Display number of clicks
-            clicksBox.innerHTML = `Number of clicks: ${cat.clicks}`;
-            // Update currentCat
-            currentCat = cats.indexOf(cat);
-        }, false);
+    var model = {
+        init: function() {
+            this.cats = [];
+            this.currentCat = undefined;
+            var catFiles = ['images/anton.png', 'images/jeff.png',
+                'images/joey.png', 'images/maurice.png', 'images/paul.png',
+                'images/randy.png', 'images/sarah.png'];
+            // Create array of cat ojects
+            for (var cat in catFiles) {
+                // Create cat name from url of named file
+                var catName = catFiles[cat].slice(0, -4).slice(7);
+                catName = catName.charAt(0).toUpperCase() + catName.slice(1);
+                model.cats.push({
+                    'name' : catName,
+                    'clicks' : 0,
+                    'url' : catFiles[cat]
+                });
+            }
+        },
+        getCatList: function() {
+            return model.cats;
+        }
     };
 
-    // Fill ul with cat list items
-    for (var cat in cats) {
-        makeCatLi(cats[cat]);
-    }
-
-    // Create listener for main image to track clicks
-    frameImg.addEventListener('click', function(e) {
-        if (currentCat >= 0) {
-            cats[currentCat].clicks++;
-            clicksBox.innerHTML = `Number of clicks: ${cats[currentCat].clicks}`;
+    var octopus = {
+        init: function() {
+            model.init();
+            viewImage.init();
+            viewList.init();
+        },
+        getCats: function() {
+            return model.getCatList();
+        },
+        getCurrentCat: function() {
+            return model.currentCat;
+        },
+        addLiListener: function(cat, li) {
+            li.addEventListener('click', function(e) {
+                model.currentCat = model.cats.indexOf(cat);
+                viewImage.render();
+            }, false);
+        },
+        incrementClick: function() {
+            if (model.currentCat >= 0) {
+                model.cats[model.currentCat].clicks++;
+                viewImage.render();
+            }
         }
-    }, false);
+    };
+
+    var viewImage = {
+        init: function() {
+            this.nameBox = document.getElementById("name");
+            this.frame = document.getElementById("frame");
+            this.clicksBox = document.getElementById("clicks");
+            this.frameImg = document.getElementById("frame-outer");
+            this.frameImg.addEventListener('click', function(e) {
+                octopus.incrementClick();
+            }, false);
+        },
+        render: function() {
+            var cats = octopus.getCats();
+            var currentCat = octopus.getCurrentCat();
+            if (currentCat >= 0) {
+                // Display Name
+                this.nameBox.innerHTML = `<h2>${cats[currentCat].name}<h2>`;
+                // Display Image in frame
+                this.frame.innerHTML = `<img src="${cats[currentCat].url}" />`;
+                // Display number of clicks
+                this.clicksBox.innerHTML =
+                    `Number of clicks: ${cats[currentCat].clicks}`;
+            }
+        }
+    };
+
+    var viewList = {
+        init: function() {
+            var catListUl = document.getElementById("cat-list");
+            // Fill ul with cat list items
+            octopus.getCats().forEach(function(cat) {
+                var elem = document.createElement('li');
+                elem.innerHTML = `${cat.name}`;
+                catListUl.appendChild(elem);
+                octopus.addLiListener(cat, elem);
+            });
+        }
+    };
+
+    octopus.init();
     </script>
 </body>
 </html>
