@@ -66,10 +66,12 @@
 <body>
     <div id="cat-app">
         <div id="cat-box">
-            <div id="name">
-                <h2>Click a cat to begin!</h2>
+            <div>
+                <h2 id="name">Click a cat to begin!</h2>
             </div>
-            <div id="frame-outer"><div id="frame"></div></div>
+            <div id="frame-outer"><div id="frame">
+                <img id="cat-pic" src="" />
+            </div></div>
             <div id="clicks">&nbsp</div>
         </div>
         <div id="cat-list-div">
@@ -96,9 +98,6 @@
                     'url' : catFiles[cat]
                 });
             }
-        },
-        getCatList: function() {
-            return model.cats;
         }
     };
 
@@ -109,7 +108,7 @@
             viewList.init();
         },
         getCats: function() {
-            return model.getCatList();
+            return model.cats;
         },
         getCurrentCat: function() {
             return model.currentCat;
@@ -130,8 +129,8 @@
 
     var viewImage = {
         init: function() {
-            this.nameBox = document.getElementById("name");
-            this.frame = document.getElementById("frame");
+            this.name = document.getElementById("name");
+            this.catPic = document.getElementById("cat-pic");
             this.clicksBox = document.getElementById("clicks");
             this.frameImg = document.getElementById("frame-outer");
             this.frameImg.addEventListener('click', function(e) {
@@ -143,11 +142,11 @@
             var currentCat = octopus.getCurrentCat();
             if (currentCat >= 0) {
                 // Display Name
-                this.nameBox.innerHTML = `<h2>${cats[currentCat].name}<h2>`;
+                this.name.textContent = cats[currentCat].name;
                 // Display Image in frame
-                this.frame.innerHTML = `<img src="${cats[currentCat].url}" />`;
+                this.catPic.src = cats[currentCat].url;
                 // Display number of clicks
-                this.clicksBox.innerHTML =
+                this.clicksBox.textContent =
                     `Number of clicks: ${cats[currentCat].clicks}`;
             }
         }
