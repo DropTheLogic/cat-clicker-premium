@@ -4,6 +4,7 @@
 var model = {
 
     init: function() {
+        this.adminIsHidden = true;
         this.cats = [];
         this.currentCat = undefined;
         var catFiles = ['images/anton.png', 'images/jeff.png',
@@ -32,6 +33,31 @@ var octopus = {
         model.init();
         viewImage.init();
         viewList.init();
+        viewAdmin.init();
+    },
+
+    getAdminHidden: function() {
+        return model.adminIsHidden;
+    },
+
+    setAdminHidden: function() {
+        model.adminIsHidden = model.adminIsHidden ? false : true;
+    },
+
+    addAttribute: function(targetElement, sourceAttribute) {
+        if (model.currentCat >= 0) {
+            var att = document.createAttribute('value');
+            att.value = model.cats[model.currentCat][sourceAttribute];
+            targetElement.setAttributeNode(att);
+        }
+    },
+
+    updateAttributes: function(name, clicks, url) {
+        model.cats[model.currentCat].name = name;
+        model.cats[model.currentCat].clicks = clicks;
+        model.cats[model.currentCat].url = url;
+        viewImage.render();
+        viewList.render();
     },
 
     getCats: function() {
@@ -46,6 +72,7 @@ var octopus = {
         li.addEventListener('click', function(e) {
             model.currentCat = model.cats.indexOf(cat);
             viewImage.render();
+            viewAdmin.render();
         }, false);
     },
 
@@ -53,6 +80,7 @@ var octopus = {
         if (model.currentCat >= 0) {
             model.cats[model.currentCat].clicks++;
             viewImage.render();
+            viewAdmin.render();
         }
     }
 };
@@ -96,11 +124,69 @@ var viewList = {
         // Fill ul with cat list items
         octopus.getCats().forEach(function(cat) {
             var elem = document.createElement('li');
-            elem.innerHTML = `${cat.name}`;
+            elem.textContent = cat.name;
             catListUl.appendChild(elem);
             octopus.addLiListener(cat, elem);
         });
+    },
+
+    render: function() {
+        var lis = document.getElementsByTagName("li");
+        var cats = octopus.getCats();
+        for (var i = 0; i < lis.length; i++) {
+            lis[i].textContent = cats[i].name;
+        }
     }
 };
+
+/*********************************************
+ * View: Admin Area
+ ********************************************/
+ var viewAdmin = {
+
+    init: function() {
+        var adminButton = document.getElementById("admin-button");
+        var adminBlock = document.getElementById("admin-form");
+        var cancel = document.getElementById("button-cancel");
+        var enter = document.getElementById("button-enter");
+        // Set listener for show/hide admin button
+        adminButton.addEventListener('click', function(e) {
+            octopus.setAdminHidden();
+            adminBlock.className = octopus.getAdminHidden() ? 'hidden' : '';
+        }, false);
+
+        // Set listener for cancel input button
+        cancel.addEventListener('click', function(e) {
+            adminBlock.reset();
+        }, false);
+
+        // Set listener for enter button
+        enter.addEventListener('click', function(e) {
+            var fieldName = document.getElementById('form-cat-name').value;
+            var fieldClicks = document.getElementById('form-cat-clicks').value;
+            var fieldUrl = document.getElementById('form-cat-url').value;
+            // Check that fieldClicks is a valid number
+            if (!isNaN(fieldClicks)) {
+                octopus.updateAttributes(fieldName, fieldClicks, fieldUrl);
+            }
+            else {
+                alert('Please enter valid number for clicks');
+            }
+        }, false);
+    },
+
+    render: function() {
+        // Clear form from any prior, unsent entries
+        document.getElementById("admin-form").reset();
+        var fieldName = document.getElementById('form-cat-name');
+        var fieldClicks = document.getElementById('form-cat-clicks');
+        var fieldUrl = document.getElementById('form-cat-url');
+
+        // Apply current cat info into fields
+        octopus.addAttribute(fieldName, 'name');
+        octopus.addAttribute(fieldClicks, 'clicks');
+        octopus.addAttribute(fieldUrl, 'url');
+    }
+ };
 
 octopus.init();

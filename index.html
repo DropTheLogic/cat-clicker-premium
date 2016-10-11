@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>Cat Clicker Premium</title>
+    <title>Cat Clicker Premium Pro</title>
     <style>
         body {
             font-family: Geneva, Tahoma, sans-serif;
@@ -30,12 +30,14 @@
         #frame img {
             position: relative;
             right: -50%;
+            max-height: 250px;
         }
         #clicks {
             padding: 15px 0px;
         }
         #cat-list-div {
             display : block;
+            margin-bottom: 20px;
         }
         #cat-list {
             list-style : none;
@@ -44,6 +46,7 @@
             justify-content: space-around;
             margin: 0px;
             padding: 0px;
+            max-width: 720px;
         }
         #cat-list li {
             font-weight : bold;
@@ -51,14 +54,41 @@
             text-align : center;
             text-decoration : none;
             flex-grow: 1;
+            border-bottom: 1px solid transparent;
         }
         #cat-list li:hover {
             background-color : #fff;
             border-bottom: 1px solid black;
         }
+        #admin-form {
+            width: 350px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-top: 10px;
+        }
+        legend {
+            font-size: 22px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .cat-data {
+            text-align: right;
+        }
+        .cat-data input {
+            width: 120px;
+        }
+        .hidden {
+            display: none;
+        }
         @media (min-width: 600px) {
             #frame-outer {
                 width: 480px;
+            }
+            #admin-form {
+                width: 480px;
+            }
+            #cat-data-fields {
+                width: 79%;
             }
         }
     </style>
@@ -77,6 +107,32 @@
         <div id="cat-list-div">
             <ul id="cat-list">
             </ul>
+        </div>
+        <div id="admin-panel">
+            <div id="admin-button">
+                <button>Admin</button>
+            </div>
+            <form id="admin-form" class="hidden">
+                <fieldset>
+                    <legend>Admin Edit</legend>
+                    Update info as desired, cheater:
+                    <div id="cat-data-fields">
+                        <div class="cat-data">Cat Name:
+                            <input type="text" id="form-cat-name">
+                        </div>
+                        <div class="cat-data">Number of clicks:
+                            <input type="text" id="form-cat-clicks">
+                        </div>
+                        <div class="cat-data">Url of image:
+                            <input type="text" id="form-cat-url">
+                        </div>
+                    </div>
+                    <div id="form-buttons">
+                        <button id="button-cancel" type="button">Cancel</button>
+                        <button id="button-enter" type="button">Enter</button>
+                    </div>
+                </fieldset>
+            </form>
         </div>
     </div>
     <script type="text/javascript" src="js/app.js"></script>
